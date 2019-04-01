@@ -1,0 +1,2 @@
+ruamel.yaml>0.15,<0.16
+prance[osv]>=0.15.0,<1

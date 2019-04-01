@@ -1,0 +1,80 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: cephosd.ceph.elemental.net
+  annotations:
+    # This is used by Helm if the CRD is installed as part of a Helm chart
+    "helm.sh/hook": "crd-install"
+spec:
+  group: ceph.elemental.net
+  names:
+    kind: CephOSD
+    listKind: CephOSDList
+    plural: cephosd
+    singular: cephosd
+  scope: Namespaced
+  version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
+  validation:
+    openAPIV3Schema:
+      properties:
+        kind:
+          type: string
+        apiVersion:
+          type: string
+        metadata:
+          $ref: >-
+            python://k8s_crd_resolver/schemata/k8s-1.13.4.json#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
+        spec:
+          required:
+            - storage
+            - updateDomain
+            - podTemplate
+          properties:
+            storage:
+              type: array
+              items:
+                type: object
+                required:
+                  - hosts
+                  - osds
+                properties:
+                  hosts:
+                    type: array
+                    minItems: 1
+                    items:
+                      type: string
+                      minLength: 1
+                  osds:
+                    type: array
+                    minItems: 1
+                    items:
+                      type: object
+                      required:
+                        - data
+                      properties:
+                        data:
+                          type: string
+                          minLength: 1
+                        db:
+                          type: string
+                          minLength: 1
+            updateDomain:
+              type: string
+              enum:
+                - "OSD"
+                - "Host"
+            podTemplate:
+              $ref: 'python://k8s_crd_resolver/schemata/k8s-1.13.4.json#/definitions/io.k8s.api.core.v1.Pod'
+status:
+  acceptedNames:
+    kind: CephOSD
+    listKind: CephOSDList
+    plural: cephosds
+    singular: cephosd
+  storedVersions:
+  - v1alphav1
+  conditions: []

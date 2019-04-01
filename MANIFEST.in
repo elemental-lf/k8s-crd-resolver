@@ -1,0 +1,4 @@
+include MANIFEST.in requirements.txt
+include .style.yapf
+recursive-include k8s_crd_resolver *.py *.yaml *.json
+recursive-include example *.yaml
