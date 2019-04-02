@@ -24,7 +24,7 @@ and in the following section on [Extensions](https://github.com/jfinkhaeuser/pra
 To install `k8s-crd-resolver`:
 
 ```bash
-pip install http://github.com/elemental-lf/k8s-crd-resolver
+pip install git+http://github.com/elemental-lf/k8s-crd-resolver
 ```
 
 It is recommended to install `k8s-crd-resolver` into a virtual environment. It has only 
