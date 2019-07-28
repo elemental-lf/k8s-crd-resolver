@@ -44,12 +44,20 @@ the source filename is `-`. And will write to standard output if the destination
 
 An example CRD is included in the `example` subdirectory.
 
-## Included schemata
+## Referencing Kubernetes schemata
 
-`k8s-crd-resolver` comes with two included schemata which you can directly reference from your CRD:
+`k8s-crd-resolver` comes with included schemata which you can directly reference from your CRD:
 
-* Kubernetes 1.12.3 schema: `python://k8s_crd_resolver/schemata/k8s-1.12.3.json`
-* Kubernetes 1.13.4 schema: `python://k8s_crd_resolver/schemata/k8s-1.13.4.json`
+* Kubernetes 1.12.3 schema : `python://k8s_crd_resolver/schemata/k8s-1.12.3.json`
+* Kubernetes 1.12.10 schema: `python://k8s_crd_resolver/schemata/k8s-1.12.10.json`
+* Kubernetes 1.13.4 schema : `python://k8s_crd_resolver/schemata/k8s-1.13.4.json`
+* Kubernetes 1.13.8 schema : `python://k8s_crd_resolver/schemata/k8s-1.13.8.json`
+* Kubernetes 1.14.4 schema : `python://k8s_crd_resolver/schemata/k8s-1.14.4.json`
+
+It is also possible to directly reference a schema in the Kubernetes source
+repository:
+
+`https://raw.githubusercontent.com/kubernetes/kubernetes/v1.15.1/api/openapi-spec/swagger.json`
 
 ## Other projects
 
