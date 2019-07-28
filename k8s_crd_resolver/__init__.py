@@ -18,11 +18,19 @@ components:
     crd_schema:
 """
 
+# Kubernetes 1.15 introduces the concept of structural schemata with some OpenAPI extensions.
+# Exclude these extensions from pruning as they can used by CRD authors.
+STRUCTURAL_SCHEMA_EXTENSIONS = (
+    'x-kubernetes-embedded-resource',
+    'x-kubernetes-int-or-string',
+    'x-kubernetes-preserve-unknown-fields',
+)
+
 
 def remove_k8s_extentions(schema):
     if isinstance(schema, dict):
         for k in list(schema.keys()):
-            if k.startswith('x-kubernetes-'):
+            if k.startswith('x-kubernetes-') and k not in STRUCTURAL_SCHEMA_EXTENSIONS:
                 del schema[k]
             else:
                 remove_k8s_extentions(schema[k])
