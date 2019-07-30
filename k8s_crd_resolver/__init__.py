@@ -36,8 +36,25 @@ def remove_k8s_extentions(schema):
                 remove_k8s_extentions(schema[k])
 
 
+def remove_descriptions(schema, source_schema):
+    if isinstance(schema, dict):
+        for k in list(schema.keys()):
+            if isinstance(source_schema, dict) and k in source_schema:
+                remove_descriptions(schema[k], source_schema[k])
+            else:
+                if k == 'description':
+                    del schema[k]
+                else:
+                    remove_descriptions(schema[k], None)
+
+
 def main():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, allow_abbrev=False)
+    parser.add_argument('--remove-descriptions',
+                        '-r',
+                        action='store_true',
+                        default=False,
+                        help='Remove object descriptions from referenced resources to reduce size')
     parser.add_argument('source', help='Source ("-" for stdin)')
     parser.add_argument('destination', help='Destination ("-" for stdout)')
     args = parser.parse_args()
@@ -66,6 +83,10 @@ def main():
 
     # Remove any Kubernetes extensions
     remove_k8s_extentions(resolved_schema)
+
+    # Remove descriptions if requested
+    if args.remove_descriptions:
+        remove_descriptions(resolved_schema, source['spec']['validation']['openAPIV3Schema'])
 
     # Implant resolved schema into CRD
     source['spec']['validation']['openAPIV3Schema'] = resolved_schema
