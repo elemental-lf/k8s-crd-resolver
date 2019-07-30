@@ -72,6 +72,6 @@ def main():
 
     if args.destination != '-':
         with open(args.destination, 'w', encoding='utf-8') as destination_f:
-            ruamel.yaml.dump(source, destination_f)
+            ruamel.yaml.dump(source, destination_f, default_flow_style=False)
     else:
-        ruamel.yaml.dump(source, sys.stdout)
+        ruamel.yaml.dump(source, sys.stdout, default_flow_style=False)
