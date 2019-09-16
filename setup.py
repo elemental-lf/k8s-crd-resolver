@@ -8,7 +8,7 @@ with open('requirements.txt', 'r', encoding='utf-8') as f:
 
 setup(
     name='k8s-crd-resolver',
-    version='0.3.0',
+    version='0.4.0',
     description='Kubernetes CRD Resolver',
     url='http://github.com/elemental-lf/k8s-crd-resolver',
     author='Lars Fenneberg',
