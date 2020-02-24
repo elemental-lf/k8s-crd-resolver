@@ -39,8 +39,9 @@ k8s-crd-resolver $SOURCE_FILE $DESTINATION_FILE
 ```
 
 `k8s-crd-resolver` can read JSON and YAML formatted files and will write a YAML formatted file.
-To facilitate the use in pipelines `k8s-crd-resolver` will read from standard input if
-the source filename is `-`. And will write to standard output if the destination filename is `-`.
+Each CRD must be in its own file. To facilitate the use in pipelines `k8s-crd-resolver`
+will read from standard input if the source filename is `-`. And will write to standard output
+if the destination filename is `-`.
 
 An example CRD is included in the `example` subdirectory.
 
