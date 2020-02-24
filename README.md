@@ -53,6 +53,9 @@ An example CRD is included in the `example` subdirectory.
 * Kubernetes 1.13.4 schema : `python://k8s_crd_resolver/schemata/k8s-1.13.4.json`
 * Kubernetes 1.13.8 schema : `python://k8s_crd_resolver/schemata/k8s-1.13.8.json`
 * Kubernetes 1.14.4 schema : `python://k8s_crd_resolver/schemata/k8s-1.14.4.json`
+* Kubernetes 1.15.3 schema : `python://k8s_crd_resolver/schemata/k8s-1.15.3.json`
+* Kubernetes 1.16.7 schema : `python://k8s_crd_resolver/schemata/k8s-1.16.7.json`
+* Kubernetes 1.17.3 schema : `python://k8s_crd_resolver/schemata/k8s-1.17.3.json`
 
 It is also possible to directly reference a schema in the Kubernetes source
 repository:
