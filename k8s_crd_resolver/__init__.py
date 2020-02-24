@@ -3,9 +3,10 @@ import argparse
 import sys
 from io import SEEK_SET
 from tempfile import NamedTemporaryFile
+from typing import Any, Dict
 
-from prance import ResolvingParser
 import ruamel.yaml
+from prance import ResolvingParser
 
 OPENAPI_V3_SKELETON = """
 openapi: 3.0.0
@@ -27,7 +28,7 @@ STRUCTURAL_SCHEMA_EXTENSIONS = (
 )
 
 
-def remove_k8s_extentions(schema):
+def remove_k8s_extentions(schema: Dict[str, Any]) -> None:
     if isinstance(schema, dict):
         for k in list(schema.keys()):
             if k.startswith('x-kubernetes-') and k not in STRUCTURAL_SCHEMA_EXTENSIONS:
@@ -36,16 +37,44 @@ def remove_k8s_extentions(schema):
                 remove_k8s_extentions(schema[k])
 
 
-def remove_descriptions(schema, source_schema):
+# This function only removes descriptions that originate in included references.
+# It will leave description supplied in the CRD alone.
+def remove_k8s_descriptions(schema: Dict[str, Any], source_schema: Dict[str, Any]) -> None:
     if isinstance(schema, dict):
         for k in list(schema.keys()):
             if isinstance(source_schema, dict) and k in source_schema:
-                remove_descriptions(schema[k], source_schema[k])
+                remove_k8s_descriptions(schema[k], source_schema[k])
             else:
                 if k == 'description':
                     del schema[k]
                 else:
-                    remove_descriptions(schema[k], None)
+                    remove_k8s_descriptions(schema[k], None)
+
+
+def parse_and_resolve(schema: Dict[str, Any], *, remove_desciptions: bool = False) -> Dict[str, Any]:
+    # Insert schema into OpenAPI specification skeleton
+    openapi_spec = ruamel.yaml.load(OPENAPI_V3_SKELETON, Loader=ruamel.yaml.SafeLoader)
+    openapi_spec['components']['schemas']['crd_schema'] = schema
+
+    with NamedTemporaryFile('w+', encoding='utf-8', suffix='.yaml') as openapi_spec_f:
+        # Write OpenAPI specification to temporary file
+        ruamel.yaml.dump(openapi_spec, openapi_spec_f)
+        openapi_spec_f.flush()
+        openapi_spec_f.seek(0, SEEK_SET)
+
+        # Parse file and resolve references
+        parser = ResolvingParser(openapi_spec_f.name, backend='openapi-spec-validator')
+
+    resolved_schema = parser.specification['components']['schemas']['crd_schema']
+
+    # Remove any Kubernetes extensions
+    remove_k8s_extentions(resolved_schema)
+
+    # Remove descriptions if requested
+    if remove_desciptions:
+        remove_k8s_descriptions(resolved_schema, schema)
+
+    return resolved_schema
 
 
 def main():
@@ -66,30 +95,20 @@ def main():
     else:
         source = ruamel.yaml.load(sys.stdin, Loader=ruamel.yaml.SafeLoader)
 
-    # Insert schema into OpenAPI specification skeleton
-    openapi_spec = ruamel.yaml.load(OPENAPI_V3_SKELETON, Loader=ruamel.yaml.SafeLoader)
-    openapi_spec['components']['schemas']['crd_schema'] = source['spec']['validation']['openAPIV3Schema']
+    if source['kind'] != 'CustomResourceDefinition':
+        raise TypeError('Input file is not a CustomResourceDefinition.')
 
-    with NamedTemporaryFile('w+', encoding='utf-8', suffix='.yaml') as openapi_spec_f:
-        # Write OpenAPI specification to temporary file
-        ruamel.yaml.dump(openapi_spec, openapi_spec_f)
-        openapi_spec_f.flush()
-        openapi_spec_f.seek(0, SEEK_SET)
-
-        # Parse file and resolve references
-        parser = ResolvingParser(openapi_spec_f.name, backend='openapi-spec-validator')
-
-    resolved_schema = parser.specification['components']['schemas']['crd_schema']
-
-    # Remove any Kubernetes extensions
-    remove_k8s_extentions(resolved_schema)
-
-    # Remove descriptions if requested
-    if args.remove_descriptions:
-        remove_descriptions(resolved_schema, source['spec']['validation']['openAPIV3Schema'])
-
-    # Implant resolved schema into CRD
-    source['spec']['validation']['openAPIV3Schema'] = resolved_schema
+    if source['apiVersion'] == 'apiextensions.k8s.io/v1beta1':
+        resolved_schema = parse_and_resolve(source['spec']['validation']['openAPIV3Schema'],
+                                            remove_desciptions=args.remove_descriptions)
+        source['spec']['validation']['openAPIV3Schema'] = resolved_schema
+    elif source['apiVersion'] == 'apiextensions.k8s.io/v1':
+        for version in source['spec']['versions']:
+            resolved_schema = parse_and_resolve(version['schema']['openAPIV3Schema'],
+                                                remove_desciptions=args.remove_descriptions)
+            version['schema']['openAPIV3Schema'] = resolved_schema
+    else:
+        raise TypeError('Unsupported CRD version {}'.format(source['version']))
 
     if args.destination != '-':
         with open(args.destination, 'w', encoding='utf-8') as destination_f:
