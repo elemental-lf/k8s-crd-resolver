@@ -3,9 +3,6 @@ try:
 except ImportError:
     from distutils.core import setup
 
-with open('requirements.txt', 'r', encoding='utf-8') as f:
-    requirements = [line.rstrip() for line in f]
-
 setup(
     name='k8s-crd-resolver',
     version='0.5.0',
@@ -14,7 +11,10 @@ setup(
     author='Lars Fenneberg',
     author_email='lf@elemental.net',
     license='Apache-2.0',
-    install_requires=requirements,
+    install_requires=[
+     'ruamel.yaml>0.15,<0.16',
+     'prance[osv]@git+https://github.com/elemental-lf/prance@fix-scheme-python',
+    ],
     packages=['k8s_crd_resolver'],
     include_package_data=True,
     entry_points="""
