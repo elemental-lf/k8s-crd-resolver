@@ -1,18 +1,17 @@
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
-  name: cephosd.ceph.elemental.net
-  annotations:
-    # This is used by Helm if the CRD is installed as part of a Helm chart
-    "helm.sh/hook": "crd-install"
+  name: cephosds.ceph.elemental.net
 spec:
   group: ceph.elemental.net
   names:
     kind: CephOSD
     listKind: CephOSDList
-    plural: cephosd
+    plural: cephosds
     singular: cephosd
   scope: Namespaced
+  subresources:
+    status: {}
   version: v1alpha1
   versions:
   - name: v1alpha1
@@ -20,15 +19,14 @@ spec:
     storage: true
   validation:
     openAPIV3Schema:
+      type: object
       properties:
         kind:
           type: string
         apiVersion:
           type: string
-        metadata:
-          $ref: >-
-            python://k8s_crd_resolver/schemata/k8s-1.13.4.json#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
         spec:
+          type: object
           required:
             - storage
             - updateDomain
@@ -68,13 +66,4 @@ spec:
                 - "OSD"
                 - "Host"
             podTemplate:
-              $ref: 'python://k8s_crd_resolver/schemata/k8s-1.13.4.json#/definitions/io.k8s.api.core.v1.Pod'
-status:
-  acceptedNames:
-    kind: CephOSD
-    listKind: CephOSDList
-    plural: cephosds
-    singular: cephosd
-  storedVersions:
-  - v1alphav1
-  conditions: []
+              $ref: 'python://k8s_crd_resolver/schemata/k8s-1.17.3.json#/definitions/io.k8s.api.core.v1.Pod'
