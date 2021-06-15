@@ -14,6 +14,7 @@ setup(
     install_requires=[
      'ruamel.yaml>0.15,<0.16',
      'prance[osv]@git+https://github.com/elemental-lf/prance@fix-scheme-python',
+     'jsonpatch>=1.32,<2'
     ],
     packages=['k8s_crd_resolver'],
     include_package_data=True,

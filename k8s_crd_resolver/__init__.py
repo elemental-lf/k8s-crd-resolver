@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import sys
+from jsonpatch import JsonPatch
 from io import SEEK_SET
 from tempfile import NamedTemporaryFile
 from typing import Any, Dict
@@ -87,6 +88,11 @@ def main():
                         action='store_true',
                         default=False,
                         help='Remove object descriptions from referenced resources to reduce size')
+    parser.add_argument('--jsonpatch',
+                        '-j',
+                        nargs='?',
+                        default=None,
+                        help='JSON patch to apply on the resolved CRD')
     parser.add_argument('source', help='Source ("-" for stdin)')
     parser.add_argument('destination', help='Destination ("-" for stdout)')
     args = parser.parse_args()
@@ -97,6 +103,12 @@ def main():
             source = ruamel.yaml.load(source_f, Loader=ruamel.yaml.SafeLoader)
     else:
         source = ruamel.yaml.load(sys.stdin, Loader=ruamel.yaml.SafeLoader)
+
+    # Load JSON patch (if any)
+    jsonpatch = None
+    if args.jsonpatch:
+        with open(args.jsonpatch, 'r', encoding='utf-8') as jsonpatch_f:
+            jsonpatch = JsonPatch.from_string(jsonpatch_f.read())
 
     if source['kind'] != 'CustomResourceDefinition':
         raise TypeError('Input file is not a CustomResourceDefinition.')
@@ -112,6 +124,9 @@ def main():
             version['schema']['openAPIV3Schema'] = resolved_schema
     else:
         raise TypeError('Unsupported CRD version {}'.format(source['version']))
+
+    if jsonpatch:
+        jsonpatch.apply(source, in_place=True)
 
     if args.destination != '-':
         with open(args.destination, 'w', encoding='utf-8') as destination_f:
