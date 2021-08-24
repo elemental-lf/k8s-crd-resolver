@@ -12,8 +12,8 @@ setup(
     author_email='lf@elemental.net',
     license='Apache-2.0',
     install_requires=[
-     'ruamel.yaml>0.15,<0.16',
-     'prance[osv]@git+https://github.com/elemental-lf/prance@fix-scheme-python',
+     'ruamel.yaml>0.17,<0.18',
+     'prance[osv]>=0.21.8.0',
      'jsonpatch>=1.32,<2'
     ],
     packages=['k8s_crd_resolver'],
