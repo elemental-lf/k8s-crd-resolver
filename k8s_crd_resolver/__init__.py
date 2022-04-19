@@ -17,7 +17,7 @@ info:
 paths: {}
 components:
   schemas:
-    crd_schema:
+    crd_schema: null
 """
 
 # Kubernetes 1.15 and above introduce some custom extensions.
@@ -61,8 +61,9 @@ def parse_and_resolve(schema: Dict[str, Any], *, remove_desciptions: bool = Fals
     openapi_spec['components']['schemas']['crd_schema'] = schema
 
     with NamedTemporaryFile('w+', encoding='utf-8', suffix='.yaml') as openapi_spec_f:
-        # Write OpenAPI specification to temporary file
-        ruamel.yaml.dump(openapi_spec, openapi_spec_f)
+        # Use default_flow_style=False to always force block-style for collections, otherwise ruamel.yaml's C parser
+        # has problems parsing results like "collection: {$ref: ...}".
+        ruamel.yaml.dump(openapi_spec, openapi_spec_f, default_flow_style=False)
         openapi_spec_f.flush()
         openapi_spec_f.seek(0, SEEK_SET)
 
