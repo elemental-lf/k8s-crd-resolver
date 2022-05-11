@@ -5,7 +5,7 @@ except ImportError:
 
 setup(
     name='k8s-crd-resolver',
-    version='0.9.0',
+    version='0.10.0',
     description='Kubernetes CRD Resolver',
     url='http://github.com/elemental-lf/k8s-crd-resolver',
     author='Lars Fenneberg',
