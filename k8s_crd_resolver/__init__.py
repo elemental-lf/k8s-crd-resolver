@@ -29,6 +29,7 @@ K8S_SCHEMA_EXTENSIONS = (
     'x-kubernetes-list-map-keys',
     'x-kubernetes-list-type',
     'x-kubernetes-map-type',
+    'x-kubernetes-validator',
 )
 
 
