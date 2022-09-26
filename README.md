@@ -92,6 +92,8 @@ without incurring additional external dependencies:
 * Kubernetes 1.21.1 schema : `python://k8s_crd_resolver/schemata/k8s-1.21.1.json`
 * Kubernetes 1.22.8 schema : `python://k8s_crd_resolver/schemata/k8s-1.22.8.json`
 * Kubernetes 1.23.5 schema : `python://k8s_crd_resolver/schemata/k8s-1.23.5.json`
+* Kubernetes 1.24.6 schema : `python://k8s_crd_resolver/schemata/k8s-1.24.6.json`
+* Kubernetes 1.25.2 schema : `python://k8s_crd_resolver/schemata/k8s-1.25.2.json`
 
 But it is also possible to reference external schemata of course. This example directly references 
 a schema in the official Kubernetes repository: 
