@@ -14,6 +14,7 @@ setup(
     install_requires=[
      'ruamel.yaml>0.17,<0.18',
      'prance[osv]>=0.21.8.0',
+     'openapi-spec-validator<0.5.0',
      'jsonpatch>=1.32,<2'
     ],
     packages=['k8s_crd_resolver'],
