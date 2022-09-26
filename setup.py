@@ -12,15 +12,12 @@ setup(
     author_email='lf@elemental.net',
     license='Apache-2.0',
     install_requires=[
-     'ruamel.yaml>0.17,<0.18',
-     'prance[osv]>=0.21.8.0',
-     'openapi-spec-validator<0.5.0',
-     'jsonpatch>=1.32,<2'
+        'ruamel.yaml>0.17,<0.18', 'prance[osv]>=0.21.8.0', 'openapi-spec-validator<0.5.0', 'jsonpatch>=1.32,<2'
     ],
     packages=['k8s_crd_resolver'],
     include_package_data=True,
     entry_points="""
         [console_scripts]
-            k8s-crd-resolver = k8s_crd_resolver:main
+            k8s-crd-resolver = k8s_crd_resolver.cli:main
     """,
 )
