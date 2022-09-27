@@ -19,6 +19,6 @@ def main():
     resolve_crd(
         args.source,
         args.destination,
-        jsonpatch=args.jsonpatch,
+        jsonpatch_file=args.jsonpatch,
         remove_descriptions=args.remove_descriptions,
     )

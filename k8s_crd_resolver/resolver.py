@@ -81,7 +81,7 @@ def _parse_and_resolve(schema: Dict[str, Any], *, remove_desciptions: bool = Fal
     return resolved_schema
 
 
-def resolve_crd(source: str, destination: str, *, jsonpatch: str = None, remove_descriptions: bool = False) -> None:
+def resolve_crd(source: str, destination: str, *, jsonpatch_file: str = None, remove_descriptions: bool = False) -> None:
     # Load CRD
     if source != '-':
         with open(source, 'r', encoding='utf-8') as source_f:
@@ -91,8 +91,8 @@ def resolve_crd(source: str, destination: str, *, jsonpatch: str = None, remove_
 
     # Load JSON patch (if any)
     jsonpatch = None
-    if jsonpatch:
-        with open(jsonpatch, 'r', encoding='utf-8') as jsonpatch_f:
+    if jsonpatch_file:
+        with open(jsonpatch_file, 'r', encoding='utf-8') as jsonpatch_f:
             jsonpatch = JsonPatch.from_string(jsonpatch_f.read())
 
     if source['kind'] != 'CustomResourceDefinition':
